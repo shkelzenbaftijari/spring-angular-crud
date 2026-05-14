@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+  <div class="w-full max-w-sm">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-teal-500 to-teal-700 px-8 py-8 text-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <i class="pi pi-file-edit text-white text-3xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-white">Invoice Hub</h1>
+        <p class="text-teal-100 text-sm mt-1">Sign in to your account</p>
+      </div>
+
+      <!-- Form -->
+      <div class="px-8 py-8 flex flex-col gap-6">
+
+        <p-floatlabel variant="on">
+          <input
+            pInputText
+            id="login"
+            [(ngModel)]="loginField"
+            name="login"
+            autocomplete="username"
+            class="w-full"
+            (keyup.enter)="submit()"
+          />
+          <label for="login">
+            <i class="pi pi-user mr-2 text-slate-400"></i>Username or Email
+          </label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on">
+          <input
+            pInputText
+            id="password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="current-password"
+            class="w-full"
+            (keyup.enter)="submit()"
+          />
+          <label for="password">
+            <i class="pi pi-lock mr-2 text-slate-400"></i>Password
+          </label>
+        </p-floatlabel>
+
+        <p-button
+          type="button"
+          label="Sign In"
+          icon="pi pi-sign-in"
+          [loading]="loading()"
+          [disabled]="!loginField.trim() || !password.trim()"
+          styleClass="w-full"
+          (onClick)="submit()"
+        />
+
+      </div>
+    </div>
+
+  </div>
+</div>

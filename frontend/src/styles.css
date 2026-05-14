@@ -1,0 +1,114 @@
+/* Layer order: PrimeNG styles sit between Tailwind base and utilities */
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-base {
+  @import "tailwindcss/preflight";
+}
+
+@import "tailwindcss/theme" layer(tailwind-base);
+@import "tailwindcss/utilities" layer(tailwind-utilities);
+
+/* PrimeNG icons */
+@import "primeicons/primeicons.css";
+
+/* Global base */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+/* Sidebar nav items */
+.nav-item:hover {
+  background-color: #e4e7ea;
+  color: #1e293b;
+}
+
+.nav-active {
+  background-color: #e0f2f1 !important;
+  color: #0d9488 !important;
+  font-weight: 500;
+}
+
+/* ─── Shell floating layout ──────────────────────────────── */
+.shell-topbar {
+  position: fixed;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+  top: 12px;
+  left: 24px;
+  right: 24px;
+  height: 56px;
+  background: #f0f1f2;
+  border: 1px solid #dde1e5;
+  border-radius: 12px;
+}
+
+.shell-sidebar {
+  position: fixed;
+  overflow-y: auto;
+  z-index: 40;
+  top: 92px;
+  left: 24px;
+  width: 280px;
+  height: calc(100vh - 116px);
+  background: #f0f1f2;
+  border: 1px solid #dde1e5;
+  border-radius: 12px;
+}
+
+.shell-main {
+  overflow: auto;
+  margin-top: 92px;
+  margin-left: 328px;
+  margin-right: 24px;
+  margin-bottom: 24px;
+  min-height: calc(100vh - 116px);
+}
+
+/* ─── Mobile: topbar edge-to-edge, no sidebar, bottom nav ── */
+@media (max-width: 1023px) {
+  .shell-topbar {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+
+  .shell-main {
+    margin-top: 76px;
+    margin-left: 24px;
+    margin-right: 24px;
+    margin-bottom: 80px;
+    min-height: calc(100vh - 156px);
+  }
+}
+
+@media (max-width: 767px) {
+  .shell-main {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+}
+
+/* ─── Bottom navigation ───────────────────────────────────── */
+.bottom-nav-active {
+  color: #0d9488 !important;
+}
+
+.bottom-nav-active i {
+  color: #0d9488 !important;
+}

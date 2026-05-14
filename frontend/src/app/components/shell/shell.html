@@ -1,0 +1,72 @@
+<!-- ─── Topbar ──────────────────────────────────────────────── -->
+<div class="shell-topbar">
+
+  <!-- Left: logo -->
+  <div class="flex items-center gap-2.5">
+    <div class="w-7 h-7 rounded flex items-center justify-center text-white text-xs font-bold"
+         style="background: #0d9488;">
+      IH
+    </div>
+    <span class="text-sm font-semibold" style="color: #2d3748; letter-spacing: 0.01em;">
+      InvoiceHub
+    </span>
+  </div>
+
+  <!-- Right: actions -->
+  <div class="flex items-center gap-2">
+    <button
+      (click)="logout()"
+      class="flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-colors"
+      style="color: #94a3b8; background: transparent; border: none; cursor: pointer;">
+      <i class="pi pi-sign-out" style="font-size: 13px;"></i>
+      <span class="hidden sm:inline">Logout</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- ─── Left Sidebar (desktop only) ──────────────────────── -->
+<aside class="shell-sidebar hidden lg:block">
+
+  <nav class="px-4 py-4 flex flex-col gap-0.5">
+
+    <p class="text-[10px] font-semibold uppercase px-3 mb-1" style="color: #94a3b8; letter-spacing: 0.08em;">
+      Navigation
+    </p>
+
+    <a routerLink="/invoices" routerLinkActive="nav-active"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors"
+       style="color: #475569;">
+      <i class="pi pi-file-edit" style="font-size: 14px;"></i>
+      Invoices
+    </a>
+
+    <a routerLink="/users" routerLinkActive="nav-active"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors"
+       style="color: #475569;">
+      <i class="pi pi-users" style="font-size: 14px;"></i>
+      Users
+    </a>
+
+  </nav>
+
+</aside>
+
+<!-- ─── Bottom Navigation (mobile/tablet only) ───────────── -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden" style="
+  background: #f0f1f2;
+  border-top: 1px solid #dde1e5;
+  height: 64px;
+">
+  <a routerLink="/invoices" routerLinkActive="bottom-nav-active"
+     class="flex-1 flex flex-col items-center justify-center gap-1 transition-colors"
+     style="color: #94a3b8; text-decoration: none;">
+    <i class="pi pi-file-edit" style="font-size: 18px;"></i>
+    <span class="text-[10px] font-medium">Invoices</span>
+  </a>
+</nav>
+
+<!-- ─── Main content area ────────────────────────────────── -->
+<main class="shell-main">
+  <router-outlet />
+</main>

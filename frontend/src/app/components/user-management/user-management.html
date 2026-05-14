@@ -1,0 +1,149 @@
+<p-confirmdialog />
+
+<div>
+  <div class="bg-white overflow-hidden" style="border: 1px solid #dde1e5; border-radius: 12px;">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+        <div>
+          <h1 class="text-xl font-bold text-slate-800">User Management</h1>
+          <p class="text-sm text-slate-400 mt-0.5">{{ users().length }} registered</p>
+        </div>
+        <p-button label="Add User" icon="pi pi-user-plus" (onClick)="openDialog()" />
+      </div>
+
+      <!-- Table -->
+      <p-table
+        [value]="users()"
+        [loading]="loading()"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template #header>
+          <tr>
+            <th>Login</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th class="w-20 text-center">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-user>
+          <tr class="hover:bg-slate-50 transition-colors">
+
+            <td>
+              <span class="font-mono text-sm font-semibold text-slate-700">{{ user.login }}</span>
+            </td>
+
+            <td>
+              @if (user.firstName || user.lastName) {
+                <span class="text-slate-600">{{ user.firstName }} {{ user.lastName }}</span>
+              } @else {
+                <span class="text-slate-300">—</span>
+              }
+            </td>
+
+            <td>
+              <span class="text-slate-500 text-sm">{{ user.email }}</span>
+            </td>
+
+            <td>
+              <div class="flex flex-wrap gap-1">
+                @for (role of user.roles; track role) {
+                  <span [class]="role === 'ROLE_ADMIN'
+                    ? 'bg-teal-100 text-teal-700 text-xs font-semibold px-2.5 py-0.5 rounded-full'
+                    : 'bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-0.5 rounded-full'">
+                    {{ role === 'ROLE_ADMIN' ? 'Admin' : 'User' }}
+                  </span>
+                }
+              </div>
+            </td>
+
+            <td>
+              <div class="flex justify-center">
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true" [text]="true"
+                  severity="danger" size="small"
+                  pTooltip="Delete user"
+                  (onClick)="confirmDelete(user)"
+                />
+              </div>
+            </td>
+
+          </tr>
+        </ng-template>
+
+        <ng-template #empty>
+          <tr>
+            <td colspan="5">
+              <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+                <i class="pi pi-users text-4xl mb-3"></i>
+                <p class="font-medium">No users yet</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+  </div>
+</div>
+
+<!-- Add User Dialog -->
+<p-dialog
+  header="Add User"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [style]="{ width: '420px' }"
+  [draggable]="false"
+>
+  <div class="flex flex-col gap-5 py-2">
+
+    <p-floatlabel variant="on">
+      <input pInputText id="ulogin" [(ngModel)]="form.login" name="ulogin" class="w-full" />
+      <label for="ulogin"><i class="pi pi-user mr-2 text-slate-400"></i>Login *</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <input pInputText id="uemail" type="email" [(ngModel)]="form.email" name="uemail" class="w-full" />
+      <label for="uemail"><i class="pi pi-envelope mr-2 text-slate-400"></i>Email *</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <input pInputText id="upassword" type="password" [(ngModel)]="form.password" name="upassword" class="w-full" />
+      <label for="upassword"><i class="pi pi-lock mr-2 text-slate-400"></i>Password *</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <input pInputText id="ufirst" [(ngModel)]="form.firstName" name="ufirst" class="w-full" />
+      <label for="ufirst"><i class="pi pi-id-card mr-2 text-slate-400"></i>First Name</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+      <input pInputText id="ulast" [(ngModel)]="form.lastName" name="ulast" class="w-full" />
+      <label for="ulast"><i class="pi pi-id-card mr-2 text-slate-400"></i>Last Name</label>
+    </p-floatlabel>
+
+    <p-select
+      [(ngModel)]="form.role"
+      [options]="roleOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select role"
+      styleClass="w-full"
+      appendTo="body"
+    />
+
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="showDialog = false" />
+    <p-button
+      label="Add User"
+      icon="pi pi-check"
+      [loading]="saving()"
+      [disabled]="!isFormValid"
+      (onClick)="submit()"
+    />
+  </ng-template>
+</p-dialog>

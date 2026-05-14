@@ -1,0 +1,337 @@
+<p-confirmdialog />
+
+<div>
+  <div class="bg-white overflow-hidden" style="border: 1px solid #dde1e5; border-radius: 12px;">
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- · HEADER                                        -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="px-4 md:px-6 py-4 md:py-5 border-b border-slate-100">
+
+      <!-- Title row -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-bold text-slate-800">Clients</h1>
+          <p class="text-sm text-slate-400 mt-0.5">{{ showingRange }}</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Desktop: search + full button -->
+          <p-iconfield class="hidden md:flex">
+            <p-inputicon styleClass="pi pi-search" />
+            <input
+              pInputText
+              #searchInput
+              (input)="searchInput.value.length >= 3 ? dt.filterGlobal(searchInput.value, 'contains') : dt.filterGlobal('', 'contains')"
+              placeholder="Search clients..."
+              class="w-64"
+            />
+          </p-iconfield>
+          <div class="hidden md:flex">
+            <p-button label="New Client" icon="pi pi-plus" (onClick)="goToCreate()" />
+          </div>
+
+          <!-- Mobile: icon button only -->
+          <div class="md:hidden">
+            <p-button icon="pi pi-plus" [rounded]="true" (onClick)="goToCreate()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile search bar (below title) -->
+      <div class="md:hidden mt-3 flex items-center gap-2 px-3 py-2.5 rounded-xl"
+           style="background: #f8fafc; border: 1px solid #dde1e5;">
+        <i class="pi pi-search text-slate-400 text-sm"></i>
+        <input
+          type="text"
+          [value]="searchTerm()"
+          (input)="searchTerm.set($any($event.target).value)"
+          placeholder="Search clients..."
+          class="flex-1 bg-transparent text-sm text-slate-600 outline-none"
+          style="border: none;"
+        />
+        @if (searchTerm()) {
+          <button (click)="searchTerm.set('')"
+                  class="flex items-center justify-center w-4 h-4 rounded-full text-slate-400"
+                  style="background: transparent; border: none; cursor: pointer;">
+            <i class="pi pi-times" style="font-size: 10px;"></i>
+          </button>
+        }
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- · HINT (desktop only)                           -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="hidden md:block px-6 py-2 bg-slate-50 border-b border-slate-100">
+      <p class="text-xs text-slate-400 flex items-center gap-1.5">
+        <i class="pi pi-info-circle"></i>
+        Click any cell to edit inline · Use <span class="font-semibold">✏️</span> for full edit
+      </p>
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- · DESKTOP TABLE                                 -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="hidden md:block">
+      <p-table
+        [value]="clients()"
+        [loading]="loading()"
+        [globalFilterFields]="['referenceNumber','fullName','email','phone']"
+        editMode="cell"
+        styleClass="p-datatable-sm"
+        #dt
+      >
+
+        <ng-template #header>
+          <tr>
+            <th pSortableColumn="referenceNumber">Reference # <p-sortIcon field="referenceNumber" /></th>
+            <th pSortableColumn="fullName">Full Name <p-sortIcon field="fullName" /></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+            <th>Phone</th>
+            <th class="w-28 text-center">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-client>
+          <tr class="hover:bg-slate-50 transition-colors">
+
+            <!-- Reference Number — inline editable -->
+            <td pEditableColumn pEditableColumnField="referenceNumber">
+              <p-cellEditor>
+                <ng-template #input>
+                  <input pInputText [(ngModel)]="client.referenceNumber"
+                         class="w-full text-sm font-mono"
+                         (focus)="onCellEditStart(client)"
+                         (blur)="onCellSave(client, 'referenceNumber')"
+                         (keyup.enter)="onCellSave(client, 'referenceNumber')" />
+                </ng-template>
+                <ng-template #output>
+                  <span class="font-mono text-sm font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded-lg cursor-pointer">
+                    {{ client.referenceNumber }}
+                  </span>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+            <!-- Full Name — inline editable -->
+            <td pEditableColumn pEditableColumnField="fullName">
+              <p-cellEditor>
+                <ng-template #input>
+                  <input pInputText [(ngModel)]="client.fullName" class="w-full"
+                         (focus)="onCellEditStart(client)"
+                         (blur)="onCellSave(client, 'fullName')"
+                         (keyup.enter)="onCellSave(client, 'fullName')" />
+                </ng-template>
+                <ng-template #output>
+                  <div class="flex items-center gap-3 cursor-pointer">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                      {{ client.fullName.charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="font-medium text-slate-800">{{ client.fullName }}</span>
+                  </div>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+            <!-- Email — inline editable -->
+            <td pEditableColumn pEditableColumnField="email">
+              <p-cellEditor>
+                <ng-template #input>
+                  <input pInputText [(ngModel)]="client.email"
+                         type="email" class="w-full"
+                         (focus)="onCellEditStart(client)"
+                         (blur)="onCellSave(client, 'email')"
+                         (keyup.enter)="onCellSave(client, 'email')" />
+                </ng-template>
+                <ng-template #output>
+                  <span class="text-slate-600 cursor-pointer">{{ client.email }}</span>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+            <!-- Phone — inline editable -->
+            <td pEditableColumn pEditableColumnField="phone">
+              <p-cellEditor>
+                <ng-template #input>
+                  <input pInputText [(ngModel)]="client.phone" class="w-full font-mono text-sm"
+                         (focus)="onCellEditStart(client)"
+                         (blur)="onCellSave(client, 'phone')"
+                         (keyup.enter)="onCellSave(client, 'phone')" />
+                </ng-template>
+                <ng-template #output>
+                  <span class="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded cursor-pointer">
+                    {{ client.phone }}
+                  </span>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="flex items-center justify-center gap-1">
+                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                  severity="info" size="small"
+                  (onClick)="goToEdit(client.id)" pTooltip="Full edit" />
+                <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
+                  severity="danger" size="small"
+                  (onClick)="confirmDelete(client)" pTooltip="Delete" />
+              </div>
+            </td>
+
+          </tr>
+        </ng-template>
+
+        <ng-template #empty>
+          <tr>
+            <td colspan="5">
+              <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                <i class="pi pi-inbox text-5xl mb-4"></i>
+                <p class="text-lg font-medium">No clients found</p>
+                <p class="text-sm mt-1">Try a different search or create a new client.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+      @if (totalPages() > 1) {
+        <div class="flex items-center justify-center gap-1 px-6 py-4 border-t border-slate-100 flex-wrap">
+
+          <button (click)="goToPage(0)" [disabled]="currentPage() === 0"
+            class="flex items-center justify-center w-8 h-8 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            style="background: transparent; color: #64748b; border: 1px solid #e2e8f0; cursor: pointer;">
+            <i class="pi pi-angle-double-left" style="font-size: 11px;"></i>
+          </button>
+
+          <button (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 0"
+            class="flex items-center justify-center w-8 h-8 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            style="background: transparent; color: #64748b; border: 1px solid #e2e8f0; cursor: pointer;">
+            <i class="pi pi-angle-left" style="font-size: 11px;"></i>
+          </button>
+
+          @for (page of pageNumbers(); track $index) {
+            @if (page === null) {
+              <span class="flex items-center justify-center w-8 h-8 text-slate-400 text-sm select-none">…</span>
+            } @else {
+              <button (click)="goToPage(page)"
+                class="flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium transition-colors"
+                [style]="page === currentPage()
+                  ? 'background: #0d9488; color: white; border: 1px solid #0d9488; cursor: default;'
+                  : 'background: transparent; color: #64748b; border: 1px solid #e2e8f0; cursor: pointer;'">
+                {{ page + 1 }}
+              </button>
+            }
+          }
+
+          <button (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages() - 1"
+            class="flex items-center justify-center w-8 h-8 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            style="background: transparent; color: #64748b; border: 1px solid #e2e8f0; cursor: pointer;">
+            <i class="pi pi-angle-right" style="font-size: 11px;"></i>
+          </button>
+
+          <button (click)="goToPage(totalPages() - 1)" [disabled]="currentPage() === totalPages() - 1"
+            class="flex items-center justify-center w-8 h-8 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            style="background: transparent; color: #64748b; border: 1px solid #e2e8f0; cursor: pointer;">
+            <i class="pi pi-angle-double-right" style="font-size: 11px;"></i>
+          </button>
+
+        </div>
+      }
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- · MOBILE CARDS                                  -->
+    <!-- ════════════════════════════════════════════════ -->
+    <div class="md:hidden">
+
+      @if (loading()) {
+        <div class="flex justify-center items-center py-16">
+          <i class="pi pi-spin pi-spinner text-3xl" style="color: #0d9488;"></i>
+        </div>
+      } @else if (filteredClients().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+          <i class="pi pi-inbox text-5xl mb-4"></i>
+          <p class="text-lg font-medium">No clients found</p>
+          <p class="text-sm mt-1">Try a different search or create a new client.</p>
+        </div>
+      } @else {
+        <div class="p-4 space-y-3">
+          @for (client of filteredClients(); track client.id) {
+
+            <div class="bg-white rounded-2xl p-4"
+                 style="border: 1px solid #dde1e5; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+
+              <!-- Card top: avatar + name/email + reference badge -->
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                       style="background: linear-gradient(135deg, #2dd4bf, #0d9488);">
+                    {{ client.fullName.charAt(0).toUpperCase() }}
+                  </div>
+                  <div>
+                    <p class="font-semibold text-slate-800 text-sm leading-tight">{{ client.fullName }}</p>
+                    <p class="text-xs text-slate-400 mt-0.5 leading-tight">{{ client.email }}</p>
+                  </div>
+                </div>
+                <span class="font-mono text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-lg shrink-0 ml-2"
+                      style="border: 1px solid #ccfbf1;">
+                  {{ client.referenceNumber }}
+                </span>
+              </div>
+
+              <!-- Phone row -->
+              <div class="flex items-center justify-between py-2.5 mb-3"
+                   style="border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9;">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Phone</span>
+                <span class="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">
+                  {{ client.phone }}
+                </span>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex gap-2">
+                <button (click)="goToEdit(client.id)"
+                        class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all"
+                        style="background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4;">
+                  <i class="pi pi-pencil" style="font-size: 11px;"></i>
+                  Edit
+                </button>
+                <button (click)="confirmDelete(client)"
+                        class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all"
+                        style="background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3;">
+                  <i class="pi pi-trash" style="font-size: 11px;"></i>
+                  Delete
+                </button>
+              </div>
+
+            </div>
+
+          }
+
+          @if (totalPages() > 1) {
+            <div class="flex items-center justify-between pt-2">
+              <button (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 0"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4; cursor: pointer;">
+                <i class="pi pi-angle-left" style="font-size: 11px;"></i>
+                Prev
+              </button>
+              <span class="text-sm text-slate-500">{{ currentPage() + 1 }} / {{ totalPages() }}</span>
+              <button (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages() - 1"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+                style="background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4; cursor: pointer;">
+                Next
+                <i class="pi pi-angle-right" style="font-size: 11px;"></i>
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+
+  </div>
+</div>
