@@ -1,0 +1,17 @@
+# ─── IDE ──────────────────────────────────────────────
+.idea/
+*.iml
+
+# ─── CLAUDE ───────────────────────────────────────────
+CLAUDE.md
+Steps.md
+
+# ─── BACKEND (Maven / Java) ───────────────────────────
+target/
+*.class
+backend/data/
+
+# ─── FRONTEND (Angular / Node) ────────────────────────
+node_modules/
+dist/
+.angular/
