@@ -27,7 +27,7 @@ export class Login {
 
     this.loading.set(true);
     this.authService.login(this.loginField.trim(), this.password).subscribe({
-      next: () => this.router.navigate(['/invoices']),
+      next: () => this.router.navigate(['/clients']),
       error: () => {
         this.messageService.add({
           severity: 'error',
